@@ -1,4 +1,5 @@
 # リポジトリ関連
+```
 ## リポジトリの作成
 $ gh repo create [<name>] [flags]
 
@@ -10,8 +11,10 @@ $ gh repo fork [<repository>] [flags]
 
 ## リポジトリ内容の閲覧
 $ gh repo view [<repository>] [flags]
+```
 
 # プルリクエスト関連
+```
 ## プルリクエストのブランチへのチェックアウト
 $ gh pr checkout {<number> | <url> | <branch>} [flags]
 
@@ -44,8 +47,10 @@ $ gh pr ready [<number> | <url> | <branch>] [flags]
 
 ## クローズしたプルリクエストを再度オープンにする
 $ gh pr reopen {<number> | <url> | <branch>} [flags]
+```
 
 # イシュー関連
+```
 ## イシューの作成
 $ gh issue create [flags]
 
@@ -63,11 +68,15 @@ $ gh issue status [flags]
 
 ## 指定のイシューの閲覧
 $ gh issue view {<number> | <url>} [flags]
+```
 
 # gistの作成
+```
 $ gh gist create [<filename>... | -] [flags]
+```
 
 # エイリアス関連
+```
 ## エイリアスの登録
 $ gh alias set <alias> <expansion> [flags]
 
@@ -76,3 +85,4 @@ $ gh alias delete <alias> [flags]
 
 ## エイリアスの一覧表示
 gh alias list [flags]
+```
