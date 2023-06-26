@@ -1,0 +1,8 @@
+前提：ローカルのfeatureブランチをpushして、リモートのmasterブランチにmergeしようとしてconflictを起こした場合
+
+1. ローカルのmasterブランチに、リモートのmasterブランチをpull
+- ローカルのmasterと、リモートのmasterを同一にする
+2. ローカルで、featureブランチに、masterブランチをmerge
+- リモートで起きたconflictをローカルでも再現する
+3. conflictを起こすので、それを解決したfeatureブランチを作る
+4. そのfeatureブランチを再push
