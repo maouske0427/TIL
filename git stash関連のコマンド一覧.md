@@ -15,11 +15,3 @@ Git stashは、現在の作業状況を一時的に保存し、作業ディレ�
 | `git stash drop <stash>` | 指定したスタッシュを削除する。 |
 | `git stash clear` | すべてのスタッシュを削除する。 |
 | `git stash branch <branchname> <stash>` | 新しいブランチを作成し、そのブランチに指定したスタッシュを適用する。適用に成功した場合はそのスタッシュを削除する。 |
-
-git stash練習
-git push stash
-差分発生
-差分発生
-featureブランチでの作業
-featureブランチ追加
-master追加
