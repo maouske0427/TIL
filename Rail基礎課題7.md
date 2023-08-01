@@ -4,8 +4,8 @@
     - references型
       user has_many boardsの関係を実現するにはboardsテーブルにuser_idが必要ですね。
       なので普通に考えるとマイグレーションファイルはこのように作成すると思います。
-
       `bundle exec rails g model board user_id:integer`
+
       確かにこれでuser_idというカラムが作られはします。
       ただ実はこれだと
       - インデックスが貼られない
@@ -21,8 +21,8 @@
   - 上記で対応
 - 掲示板のカラム名とカラムの型が以下ようになっており、指定されているバリデーションが設定されていること
   - presence: true を付与したカラムは、 データベース側に null false の制約をつけていること
-    - migrationファイルで記載してdb:migrate
-  - ユーザーID: user_id(integer)
+    - migrationファイルでnull: false記載してdb:migrate
+  - ユーザーID: user:references
     - 上記rails gで対応
   - タイトル: title(string), 未入力を許可せず、最大文字数255文字のバリデーションを設定してください
     - validates :title, presence: true, length: { maximum: 255 }
@@ -30,7 +30,7 @@
     - validates :body, presence: true, length: { maximum: 65535 }
 - DB上で掲示板とユーザーのデータが紐付いていること
   - User has_many Boards, dependent: :destroy
-    - userが削除されたら、boardもまとめて削除されるようにdependent記載
+    - userが削除されたら、boardもまとめて削除されるようにdependentを記載
   - Board belongs_to User
 - 掲示板とユーザーのモデルにアソシエーションが設定してあること
   - (上記で対応)
@@ -49,12 +49,24 @@
   ここでは、@boardsというインスタンス変数に格納されている掲示板のデータを一つずつ取り出し(each do |board|)、その各データのタイトル(board.title)、本文(board.content)、投稿者のフルネーム(board.user.full_name)、投稿日時(board.created_at)を表示しているダ。
   ただし、このコードが動作するためには、掲示板のデータが@boardsに格納されていること、そして投稿者のモデルにfull_nameというメソッドまたは属性が存在していることが前提条件ダナ。それに注意してほしいダゾ！
 - 掲示板の created_at の表示が、2023/05/10 11:00 のような形式で表示されるようになっていること(日付のフォーマットにはi18nのメソッドを使用してください)
-  - ????
+  - `<p><%= l Time.now, format: :short %></p>`
+  - 上記のような形で、`<%= l created_at, format: :long %>`のように記載
+    - (ちなみに、**l**はlocalizeの略だと思われる。)
+  - 前提としては下記にhttps://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.ymlに記載されている
+  ```ruby
+  time:
+    am: 午前
+    formats:
+        default: "%Y年%m月%d日(%a) %H時%M分%S秒 %z"
+        long: "%Y/%m/%d %H:%M"
+        short: "%m/%d %H:%M"
+  ```
 - 掲示板が１つも存在しない場合は、「掲示板がありません」と表示するようになっていること
   - `<% if @boards.present? %>`を使う
 - ログイン後のヘッダーから掲示板一覧に遷移できるようにリンクが設定されていること
   - ヘッダーに`link_to '掲示板一覧', boards_path`
 - 未ログイン状態で掲示板一覧にアクセスすると、ログイン画面に遷移し、「ログインしてください」というフラッシュメッセージが表示されるようになっていること
+  - ？？？
 - トップページ、新規ユーザー登録画面、ログイン画面に関しては、未ログイン状態でもアクセスできるようになっていること
   - _before_login_headerで表示する
 - ログインに成功した際は、掲示板一覧画面(/boards)に遷移するように修正されていること
@@ -109,15 +121,16 @@
 - gem Fakerを利用してseeds.rbファイルを修正して、Userモデルの作成とUserモデルに紐づくBoardモデルのダミーデーターを作成出来るようにしてください
   まずは、db/seeds.rbというファイルをエディタで開くダ。ここにはデータベースに初期データを挿入するためのコードを書くダ。
   例えば、掲示板(Board)のデータを作るとすると、次のように書くダ。
+  下記のような形で実装するとuserに紐づいたarticleを作成することができる.
+  (複数形になってるところが割とハマりポイントなのでお気をつけて！)
   ```ruby
   20.times do |n|
-    Board.create!(
-      last_name: Faker::Name.unique.last_name,
-      first_name: Faker::Name.unique.first_name,
-      email: Faker::Internet.unique.email,
-      password: "3150test",
-      password_confirmation: "3150test"
-    )
+    User.all.each do |user|
+      user.boards.create!(
+        title: Faker::Name.unique.last_name,
+        body: Faker::Name.unique.first_name,
+      )
+    end
   end
   ```
   ここではtimesメソッドを使って20回ループを回し、その中でBoard.createメソッドを使って掲示板のデータを作成しているダ。
